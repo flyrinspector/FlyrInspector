@@ -4,6 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Módulo de Manejo de Usuarios</title>
+
+    <!-- Evitar favicon por defecto -->
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font -->
@@ -23,7 +27,7 @@
             <!-- Vistas controladas por JavaScript -->
             <div id="login-view" class="w-full">
                 <div class="brand">
-                    <img class="brand-logo" src="logo.png" alt="Logo" />
+                    <img class="brand-logo" src="Resources/logo.png" alt="Logo" />
                 </div>
                 <h1 id="login-title" class="title">BIENVENIDO</h1>
                 <form id="login-form" class="login-form">
@@ -91,8 +95,10 @@
                 <input type="text" id="signup-name" name="name" required>
                 <label for="signup-lastname">Apellido</label>
                 <input type="text" id="signup-lastname" name="lastname" required>
-                <label for="signup-email">Correo Electrónico (Gmail)</label>
-                <input type="email" id="signup-email" name="email" pattern=".+@gmail\.com" title="Debe ser un correo de Gmail" required>
+                <label for="signup-email">Correo Electrónico (Gmail o Flyr)</label>
+                <input type="email" id="signup-email" name="email" 
+                       pattern=".+@(gmail\.com|flyr\.com)" 
+                       title="Debe ser un correo @gmail.com o @flyr.com" required>
                 <label for="signup-password">Contraseña</label>
                 <input type="password" id="signup-password" name="password" required minlength="6">
                 <p class="mt-1 text-xs text-gray-500">Mínimo 6 caracteres.</p>
