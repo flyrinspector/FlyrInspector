@@ -8,6 +8,16 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const form = document.getElementById("reset-form");
 const msg = document.getElementById("reset-message");
 
+// ✅ Recuperar la sesión desde la URL cuando cargue la página
+window.addEventListener("DOMContentLoaded", async () => {
+  const { data, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
+  if (error) {
+    console.error("❌ Error obteniendo sesión desde URL:", error.message);
+    msg.textContent = "❌ No se pudo validar el enlace. Intenta pedir otro correo de recuperación.";
+    msg.className = "text-red-500";
+  }
+});
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const password = document.getElementById("new-password").value;
@@ -20,7 +30,7 @@ form.addEventListener("submit", async (e) => {
   }
 
   try {
-    // updateUser funciona solo si el usuario llegó con el "access_token" válido del email
+    // 🔑 Ahora sí, updateUser funcionará porque ya cargamos la sesión con getSessionFromUrl
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) throw error;
