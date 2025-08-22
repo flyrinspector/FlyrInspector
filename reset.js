@@ -1,32 +1,41 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
+// Configura tu Supabase
 const supabaseUrl = "https://yoxwbxtntqrlioezfubv.supabase.co";
-const supabaseKey = "TU_ANON_KEY_AQUI"; // ⚠️ usa el anon key, no el service key
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Captura la sesión que viene en la URL del correo
-window.addEventListener("DOMContentLoaded", async () => {
-  const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-  if (error) {
-    document.getElementById("reset-message").textContent = "❌ El enlace no es válido o expiró.";
-    document.getElementById("reset-message").classList.add("text-red-500");
-  }
-});
+const form = document.getElementById("reset-form");
+const msg = document.getElementById("reset-message");
 
-// Manejo del formulario
-document.getElementById("reset-form")?.addEventListener("submit", async (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const newPassword = document.getElementById("new-password").value;
-  const msg = document.getElementById("reset-message");
+  const password = document.getElementById("new-password").value;
+  const confirm = document.getElementById("confirm-password").value;
+
+  if (password !== confirm) {
+    msg.textContent = "❌ Las contraseñas no coinciden";
+    msg.className = "text-red-500";
+    return;
+  }
 
   try {
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    // updateUser funciona solo si el usuario llegó con el "access_token" válido del email
+    const { error } = await supabase.auth.updateUser({ password });
+
     if (error) throw error;
 
-    msg.textContent = "✅ Contraseña actualizada correctamente.";
-    msg.classList.add("text-green-500");
+    msg.textContent = "✅ Contraseña actualizada correctamente. Ya puedes iniciar sesión.";
+    msg.className = "text-green-600";
+
+    // Opcional: redirigir al login después de 2s
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 2000);
+
   } catch (err) {
-    msg.textContent = "❌ " + err.message;
-    msg.classList.add("text-red-500");
+    msg.textContent = "❌ Error: " + err.message;
+    msg.className = "text-red-500";
+    console.error("Error reset password:", err);
   }
 });
