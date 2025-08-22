@@ -4,8 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Restablecer Contraseña</title>
-
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen flex items-center justify-center bg-gray-100">
@@ -26,16 +24,30 @@
           class="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-400" />
       </div>
 
-      <button type="submit" 
-        class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition">
+      <button id="reset-submit" type="submit" disabled
+        class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50">
         Guardar contraseña
       </button>
 
       <p id="reset-message" class="text-center text-sm mt-4"></p>
+
+      <!-- Contenedor oculto para reenviar link si expiró -->
+      <div id="resend-container" class="hidden mt-6">
+        <p class="text-center text-sm text-gray-600 mb-2">
+          ¿Tu enlace expiró? Ingresa tu correo para reenviar:
+        </p>
+        <form id="resend-form" class="space-y-3">
+          <input id="resend-email" type="email" placeholder="tu@correo.com" required
+            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-400" />
+          <button type="submit"
+            class="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition">
+            Reenviar link
+          </button>
+        </form>
+      </div>
     </form>
   </div>
 
-  <!-- Tu script de lógica -->
   <script type="module" src="./reset.js"></script>
 </body>
 </html>
