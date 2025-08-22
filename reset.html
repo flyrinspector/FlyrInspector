@@ -1,41 +1,41 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Restablecer Contraseña</title>
 
-  <!-- Tailwind -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
+<body class="min-h-screen flex items-center justify-center bg-gray-100">
 
-  <div class="bg-white shadow-lg rounded-xl p-6 w-full max-w-md">
-    <h2 class="text-2xl font-bold text-center mb-4">🔒 Restablecer Contraseña</h2>
+  <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-6">Restablecer Contraseña</h1>
 
     <form id="reset-form" class="space-y-4">
       <div>
-        <label for="new-password" class="block text-sm font-medium text-gray-700">Nueva contraseña</label>
+        <label for="new-password" class="block font-medium">Nueva Contraseña</label>
         <input type="password" id="new-password" required minlength="6"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"/>
+          class="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-400" />
       </div>
 
       <div>
-        <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirmar contraseña</label>
+        <label for="confirm-password" class="block font-medium">Confirmar Contraseña</label>
         <input type="password" id="confirm-password" required minlength="6"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"/>
+          class="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-400" />
       </div>
 
-      <button type="submit"
-        class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition">
-        Guardar nueva contraseña
+      <button type="submit" 
+        class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition">
+        Guardar contraseña
       </button>
 
-      <p id="reset-message" class="text-center mt-2 text-sm"></p>
+      <p id="reset-message" class="text-center text-sm mt-4"></p>
     </form>
   </div>
 
-  <!-- Script -->
+  <!-- Tu script de lógica -->
   <script type="module" src="./reset.js"></script>
 </body>
 </html>
