@@ -8,15 +8,21 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const form = document.getElementById("reset-form");
 const msg = document.getElementById("reset-message");
 
-// ✅ Recuperar la sesión desde la URL cuando cargue la página
-window.addEventListener("DOMContentLoaded", async () => {
+/* 🔑 PASO 1: Obtener sesión desde la URL */
+async function setSessionFromUrl() {
   const { data, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
   if (error) {
-    console.error("❌ Error obteniendo sesión desde URL:", error.message);
-    msg.textContent = "❌ No se pudo validar el enlace. Intenta pedir otro correo de recuperación.";
+    console.error("❌ Error al procesar URL:", error.message);
+    msg.textContent = "❌ Link inválido o expirado. Vuelve a solicitar el cambio.";
     msg.className = "text-red-500";
+    return false;
   }
-});
+  console.log("✅ Sesión establecida:", data);
+  return true;
+}
+
+/* Al cargar la página, procesamos el token de la URL */
+setSessionFromUrl();
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -30,17 +36,14 @@ form.addEventListener("submit", async (e) => {
   }
 
   try {
-    // 🔑 Ahora sí, updateUser funcionará porque ya cargamos la sesión con getSessionFromUrl
     const { error } = await supabase.auth.updateUser({ password });
-
     if (error) throw error;
 
     msg.textContent = "✅ Contraseña actualizada correctamente. Ya puedes iniciar sesión.";
     msg.className = "text-green-600";
 
-    // Opcional: redirigir al login después de 2s
     setTimeout(() => {
-      window.location.href = "/";
+      window.location.href = "/index.html"; // Redirige al login
     }, 2000);
 
   } catch (err) {
