@@ -1,7 +1,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const supabaseUrl = "https://yoxwbxtntqrlioezfubv.supabase.co";
-const supabaseKey = "TU_PUBLIC_ANON_KEY"; // ⚠️ reemplaza con tu anon key
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ reemplaza con tu anon key
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 let currentPhone = "";
