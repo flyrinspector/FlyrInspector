@@ -1,157 +1,78 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-// 🔑 Configura tus credenciales
 const supabaseUrl = "https://yoxwbxtntqrlioezfubv.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo";
+const supabaseKey = "TU_PUBLIC_ANON_KEY"; // ⚠️ pon aquí tu anon key
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const form = document.getElementById("reset-form");
-const msg = document.getElementById("reset-message");
-const submitBtn = document.getElementById("reset-submit");
-const resendContainer = document.getElementById("resend-container");
-const resendForm = document.getElementById("resend-form");
+// Guardamos el teléfono para usarlo luego
+let currentPhone = "";
 
-// Función para mostrar mensajes
-function showMessage(text, isError = false) {
-  msg.textContent = text;
-  msg.className = `text-center text-sm mt-4 ${isError ? 'text-red-500' : 'text-green-600'}`;
-}
+// ---- Paso 1: enviar OTP ----
+document.getElementById("send-otp-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const phone = document.getElementById("phone").value.trim();
+  const msg = document.getElementById("send-otp-msg");
 
-// Función para verificar coincidencia de contraseñas
-function checkPasswordsMatch() {
-  const password = document.getElementById("new-password").value;
-  const confirm = document.getElementById("confirm-password").value;
-  const isValid = password.length >= 6 && password === confirm;
-  submitBtn.disabled = !isValid;
-  return isValid;
-}
-
-// Listeners para verificar contraseñas en tiempo real
-document.getElementById("new-password").addEventListener("input", checkPasswordsMatch);
-document.getElementById("confirm-password").addEventListener("input", checkPasswordsMatch);
-
-// ✅ Verificar sesión al cargar la página
-window.addEventListener("DOMContentLoaded", async () => {
   try {
-    // Esperar un momento para que Supabase procese la URL automáticamente
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const { data: { session }, error } = await supabase.auth.getSession();
-    
-    if (error) {
-      console.error("Error obteniendo sesión:", error);
-      showMessage("❌ Error al verificar la sesión. El enlace puede haber expirado.", true);
-      submitBtn.disabled = true;
-      resendContainer.classList.remove("hidden");
-      return;
-    }
+    const { error } = await supabase.auth.signInWithOtp({ phone });
+    if (error) throw error;
 
-    if (!session) {
-      console.log("No hay sesión activa");
-      showMessage("❌ El enlace ha expirado o no es válido. Solicita un nuevo enlace.", true);
-      submitBtn.disabled = true;
-      resendContainer.classList.remove("hidden");
-      return;
-    }
+    msg.textContent = "✅ Código enviado al teléfono.";
+    msg.className = "text-green-600";
 
-    console.log("✅ Sesión válida encontrada:", session.user.email);
-    showMessage("✅ Enlace válido. Puedes cambiar tu contraseña.", false);
-    submitBtn.disabled = false;
-
+    currentPhone = phone;
+    document.getElementById("verify-otp-form").classList.remove("hidden");
   } catch (err) {
-    console.error("❌ Error inesperado:", err);
-    showMessage("❌ Error al procesar el enlace. Intenta solicitar uno nuevo.", true);
-    submitBtn.disabled = true;
-    resendContainer.classList.remove("hidden");
+    msg.textContent = "❌ " + err.message;
+    msg.className = "text-red-500";
   }
 });
 
-// ✅ Manejar el envío del formulario para cambiar contraseña
-form.addEventListener("submit", async (e) => {
+// ---- Paso 2: verificar OTP ----
+document.getElementById("verify-otp-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  
-  const password = document.getElementById("new-password").value;
-  const confirm = document.getElementById("confirm-password").value;
-
-  if (password !== confirm) {
-    showMessage("❌ Las contraseñas no coinciden", true);
-    return;
-  }
-
-  if (password.length < 6) {
-    showMessage("❌ La contraseña debe tener al menos 6 caracteres", true);
-    return;
-  }
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Guardando...";
-  showMessage("Actualizando contraseña...", false);
+  const token = document.getElementById("otp").value.trim();
+  const msg = document.getElementById("verify-otp-msg");
 
   try {
-    // Verificar que tenemos una sesión activa
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      throw new Error("La sesión ha expirado. Solicita un nuevo enlace.");
-    }
-
-    const { error } = await supabase.auth.updateUser({ 
-      password: password 
+    const { data, error } = await supabase.auth.verifyOtp({
+      phone: currentPhone,
+      token,
+      type: "sms",
     });
-    
     if (error) throw error;
 
-    showMessage("✅ Contraseña actualizada correctamente. Redirigiendo al login...", false);
-    
-    // Cerrar sesión para que el usuario haga login con la nueva contraseña
-    await supabase.auth.signOut();
+    msg.textContent = "✅ Código verificado. Ahora ingresa tu nueva contraseña.";
+    msg.className = "text-green-600";
 
-    setTimeout(() => {
-      window.location.href = "/"; // Redirigir al login
-    }, 2000);
-
+    document.getElementById("reset-password-form").classList.remove("hidden");
   } catch (err) {
-    console.error("❌ Error al actualizar contraseña:", err);
-    showMessage("❌ " + err.message, true);
-    
-    if (err.message.includes("expirado") || err.message.includes("sesión")) {
-      resendContainer.classList.remove("hidden");
-    }
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Guardar contraseña";
+    msg.textContent = "❌ " + err.message;
+    msg.className = "text-red-500";
   }
 });
 
-// ✅ Manejar reenvío de enlace de restablecimiento
-resendForm.addEventListener("submit", async (e) => {
+// ---- Paso 3: cambiar contraseña ----
+document.getElementById("reset-password-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  
-  const email = document.getElementById("resend-email").value.trim();
-  const resendBtn = resendForm.querySelector("button[type=submit]");
-  
-  if (!email) {
-    alert("Por favor ingresa tu correo electrónico");
+  const pass1 = document.getElementById("new-password").value;
+  const pass2 = document.getElementById("confirm-password").value;
+  const msg = document.getElementById("reset-password-msg");
+
+  if (pass1 !== pass2) {
+    msg.textContent = "❌ Las contraseñas no coinciden.";
+    msg.className = "text-red-500";
     return;
   }
 
-  resendBtn.disabled = true;
-  resendBtn.textContent = "Enviando...";
-
   try {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + "/reset.html",
-    });
-    
+    const { error } = await supabase.auth.updateUser({ password: pass1 });
     if (error) throw error;
-    
-    showMessage("✅ Nuevo enlace enviado a tu correo. Revisa tu bandeja de entrada.", false);
-    resendContainer.classList.add("hidden");
-    
+
+    msg.textContent = "✅ Contraseña actualizada. Ya puedes iniciar sesión.";
+    msg.className = "text-green-600";
   } catch (err) {
-    console.error("❌ Error al reenviar enlace:", err);
-    showMessage("❌ " + err.message, true);
-  } finally {
-    resendBtn.disabled = false;
-    resendBtn.textContent = "Reenviar link";
+    msg.textContent = "❌ " + err.message;
+    msg.className = "text-red-500";
   }
 });
