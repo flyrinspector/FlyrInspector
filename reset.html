@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restablecer Contraseña</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="auth-page">
+
+  <main class="auth-card max-w-md mx-auto mt-20">
+    <h2 class="title text-center">Restablecer Contraseña</h2>
+    <form id="reset-form" class="login-form">
+      <label for="new-password">Nueva Contraseña</label>
+      <input type="password" id="new-password" required minlength="6" placeholder="••••••••">
+      <button type="submit" class="btn btn-primary btn-block">Guardar Contraseña</button>
+      <p id="reset-message" class="mt-4 text-center"></p>
+    </form>
+    <div class="text-center mt-4">
+      <a href="index.html" class="link">Volver al login</a>
+    </div>
+  </main>
+
+  <script type="module" src="./reset.js"></script>
+</body>
+</html>

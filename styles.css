@@ -31,13 +31,17 @@ body {
     padding: 32px;
     display: flex;
     flex-direction: column;
+    margin: auto;
     gap: 16px;
     border: 1px solid rgba(2,6,23,0.06);
+    
+    
+    
 }
 .brand { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 4px; }
 .brand-logo { max-width: 100px; height: auto; }
 .title { font-size: 22px; font-weight: 600; margin: 0 0 4px; text-align: center; }
-.login-form { display: grid; gap: 10px; }
+.login-form { display: grid; gap: 5px; }
 label { font-size: 14px; color: var(--muted); }
 input[type="email"], input[type="password"], input[type="text"], input[type="tel"] {
     width: 100%; padding: 12px 14px; border-radius: 12px;
@@ -80,9 +84,11 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--ring); }
 }
 .modal-content {
     background-color: white;
-    padding: 24px;
+    padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 90%;
     max-width: 400px;
+    height: 100%;
+    
 }

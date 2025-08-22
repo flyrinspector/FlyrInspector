@@ -1,127 +1,129 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Módulo de Manejo de Usuarios</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Módulo de Manejo de Usuarios</title>
 
-    <!-- Evitar favicon por defecto -->
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <!-- Evitar favicon por defecto -->
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="./styles.css">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
 
-    <!-- Supabase Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <main class="auth-page">
-        <section class="auth-card" role="form" aria-labelledby="login-title">
-            <!-- Vistas controladas por JavaScript -->
-            <div id="login-view" class="w-full">
-                <div class="brand">
-                    <img class="brand-logo" src="Resources/logo.png" alt="Logo" />
-                </div>
-                <h1 id="login-title" class="title">BIENVENIDO</h1>
-                <form id="login-form" class="login-form">
-                    <label for="login-email">Email</label>
-                    <input type="email" id="login-email" name="email" placeholder="you@example.com" required />
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password" placeholder="••••••••" required />
-                    <div class="form-row">
-                        <label class="checkbox">
-                            <input id="remember" name="remember" type="checkbox" />
-                            <span>Remember me</span>
-                        </label>
-                        <a class="link" href="#" id="forgot-password-link">Forgot password?</a>
-                    </div>
-                    <button class="btn btn-primary btn-block" type="submit">Login</button>
-                    <div id="login-error-message" class="text-red-500 text-center text-sm hidden"></div>
-                </form>
-                <p class="signup">
-                    Don't have an account? <a class="link" href="#" id="signup-link">Sign up</a>
-                </p>
-            </div>
+  <main class="auth-page">
+    <section class="auth-card" role="form" aria-labelledby="login-title">
 
-            <div id="profile-view" class="w-full hidden">
-                <h2 class="title">Perfil de Usuario</h2>
-                <form id="profile-form" class="login-form">
-                    <label for="profile-name">Nombre</label>
-                    <input type="text" id="profile-name" name="name" required>
-                    <label for="profile-lastname">Apellido</label>
-                    <input type="text" id="profile-lastname" name="lastname" required>
-                    <label for="profile-email">Correo Electrónico (No modificable)</label>
-                    <input type="email" id="profile-email" name="email" class="bg-gray-100 cursor-not-allowed" disabled>
-                    <label for="profile-password">Nueva Contraseña</label>
-                    <input type="password" id="profile-password" name="password" placeholder="••••••••">
-                    <p class="mt-1 text-xs text-gray-500">Deja en blanco si no deseas cambiarla.</p>
-                    <label for="profile-phone">Teléfono Celular</label>
-                    <input type="tel" id="profile-phone" name="phone">
-                    <button type="submit" class="btn btn-primary btn-block">Guardar cambios</button>
-                    <div id="profile-message" class="text-center mt-4"></div>
-                    <button type="button" id="logout-button" class="btn btn-neutral btn-block">Cerrar Sesión</button>
-                </form>
-            </div>
-
-            <div id="forgot-password-view" class="w-full hidden">
-                <h2 class="title">Recuperar Contraseña</h2>
-                <form id="forgot-password-form" class="login-form">
-                    <label for="forgot-email">Correo Electrónico</label>
-                    <input type="email" id="forgot-email" name="email" placeholder="you@example.com" required>
-                    <button type="submit" class="btn btn-primary btn-block">Enviar link y SMS</button>
-                    <p id="forgot-message" class="text-center mt-4"></p>
-                    <a href="#" id="back-to-login-link" class="link text-center">Volver a Login</a>
-                </form>
-            </div>
-        </section>
-        <footer class="legal">
-            <p></p>
-        </footer>
-    </main>
-
-    <!-- Modal de Registro -->
-    <div id="signup-modal" class="modal">
-        <div class="modal-content auth-card">
-            <h3 class="title">Crear Usuario</h3>
-            <form id="signup-form" class="login-form">
-                <label for="signup-name">Nombre</label>
-                <input type="text" id="signup-name" name="name" required>
-                <label for="signup-lastname">Apellido</label>
-                <input type="text" id="signup-lastname" name="lastname" required>
-                <label for="signup-email">Correo Electrónico (Gmail o Flyr)</label>
-                <input type="email" id="signup-email" name="email" 
-                       pattern=".+@(gmail\.com|flyr\.com)" 
-                       title="Debe ser un correo @gmail.com o @flyr.com" required>
-                <label for="signup-password">Contraseña</label>
-                <input type="password" id="signup-password" name="password" required minlength="6">
-                <p class="mt-1 text-xs text-gray-500">Mínimo 6 caracteres.</p>
-                <label for="signup-phone">Teléfono Celular</label>
-                <input type="tel" id="signup-phone" name="phone">
-                <button type="submit" class="btn btn-primary btn-block">Crear cuenta</button>
-                <div id="signup-message" class="text-center mt-4"></div>
-            </form>
-            <div class="text-center">
-                <button id="close-signup-modal" class="link">Cancelar</button>
-            </div>
+      <!-- LOGIN -->
+      <div id="login-view" class="w-full">
+        <div class="brand">
+          <img class="brand-logo" src="Resources/logo.png" alt="Logo" />
         </div>
-    </div>
+        <h1 id="login-title" class="title">BIENVENIDO</h1>
+        <form id="login-form" class="login-form">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" name="email" placeholder="you@example.com" required />
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" name="password" placeholder="••••••••" required />
+          <div class="form-row">
+            <label class="checkbox">
+              <input id="remember" name="remember" type="checkbox" />
+              <span>Recordarme</span>
+            </label>
+            <a class="link" href="#" id="forgot-password-link">¿Olvidaste tu contraseña?</a>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Login</button>
+          <div id="login-error-message" class="text-red-500 text-center text-sm hidden"></div>
+        </form>
+        <p class="signup">
+          ¿No tienes cuenta? <a class="link" href="#" id="signup-link">Registrarse</a>
+        </p>
+      </div>
 
-    <!-- Modal de Mensaje -->
-    <div id="message-modal" class="modal">
-        <div class="modal-content auth-card text-center">
-            <h3 id="modal-title" class="title"></h3>
-            <p id="modal-body" class="mb-6"></p>
-            <button id="close-message-modal" class="btn btn-primary btn-block">Aceptar</button>
-        </div>
-    </div>
+      <!-- PERFIL -->
+      <div id="profile-view" class="w-full hidden">
+        <h2 class="title">Perfil de Usuario</h2>
+        <form id="profile-form" class="login-form">
+          <label for="profile-name">Nombre</label>
+          <input type="text" id="profile-name" name="name" required>
+          <label for="profile-lastname">Apellido</label>
+          <input type="text" id="profile-lastname" name="lastname" required>
+          <label for="profile-email">Correo Electrónico</label>
+          <input type="email" id="profile-email" name="email" class="bg-gray-100 cursor-not-allowed" disabled>
+          <label for="profile-password">Nueva Contraseña</label>
+          <input type="password" id="profile-password" name="password" placeholder="••••••••">
+          <p class="mt-1 text-xs text-gray-500">Deja en blanco si no deseas cambiarla.</p>
+          <label for="profile-phone">Teléfono Celular</label>
+          <input type="tel" id="profile-phone" name="phone">
+          <button type="submit" class="btn btn-primary btn-block">Guardar cambios</button>
+          <div id="profile-message" class="text-center mt-4"></div>
+          <button type="button" id="logout-button" class="btn btn-neutral btn-block">Cerrar Sesión</button>
+        </form>
+      </div>
 
-    <script type="module" src="./main.js"></script>
+      <!-- FORGOT PASSWORD -->
+      <div id="forgot-password-view" class="w-full hidden">
+        <h2 class="title">Recuperar Contraseña</h2>
+        <form id="forgot-password-form" class="login-form">
+          <label for="forgot-email">Correo Electrónico</label>
+          <input type="email" id="forgot-email" name="email" placeholder="you@example.com" required>
+          <button type="submit" class="btn btn-primary btn-block">Enviar link al correo</button>
+          <p id="forgot-message" class="text-center mt-4"></p>
+          <a href="#" id="back-to-login-link" class="link text-center">Volver a Login</a>
+        </form>
+      </div>
+
+    </section>
+    <footer class="legal"><p></p></footer>
+  </main>
+
+  <!-- MODAL REGISTRO -->
+  <div id="signup-modal" class="modal">
+    <div class="modal-content auth-card">
+      <h3 class="title">Crear Usuario</h3>
+      <form id="signup-form" class="login-form">
+        <label for="signup-name">Nombre</label>
+        <input type="text" id="signup-name" name="name" required>
+        <label for="signup-lastname">Apellido</label>
+        <input type="text" id="signup-lastname" name="lastname" required>
+        <label for="signup-email">Correo Electrónico (Gmail o Flyr)</label>
+        <input type="email" id="signup-email" name="email" 
+          pattern=".+@(gmail\.com|flyr\.com)" 
+          title="Debe ser un correo @gmail.com o @flyr.com" required>
+        <label for="signup-password">Contraseña</label>
+        <input type="password" id="signup-password" name="password" required minlength="6">
+        <p class="mt-1 text-xs text-gray-500">Mínimo 6 caracteres.</p>
+        <label for="signup-phone">Teléfono Celular</label>
+        <input type="tel" id="signup-phone" name="phone">
+        <button type="submit" class="btn btn-primary btn-block">Crear cuenta</button>
+        <div id="signup-message" class="text-center mt-4"></div>
+      </form>
+      <div class="text-center">
+        <button id="close-signup-modal" class="link">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL MENSAJES -->
+  <div id="message-modal" class="modal">
+    <div class="modal-content auth-card text-center">
+      <h3 id="modal-title" class="title"></h3>
+      <p id="modal-body" class="mb-6"></p>
+      <button id="close-message-modal" class="btn btn-primary btn-block">Aceptar</button>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
 </body>
 </html>
