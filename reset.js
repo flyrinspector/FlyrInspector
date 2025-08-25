@@ -1,7 +1,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const supabaseUrl = "https://yoxwbxtntqrlioezfubv.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ pon tu anon key aquí
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const msg = document.getElementById("reset-msg");
@@ -19,8 +19,10 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const { data, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
+    // 🔹 v2 usa exchangeCodeForSession
+    const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.hash);
     if (error) throw error;
+
     console.log("✅ Sesión de recuperación activa:", data.session);
   } catch (err) {
     console.error("❌ Error al procesar el link:", err.message);
