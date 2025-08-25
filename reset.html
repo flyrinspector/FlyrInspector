@@ -4,14 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cambiar Contraseña</title>
-
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen flex items-center justify-center bg-gray-100">
 
   <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
-    <!-- Logo y título -->
+    <!-- Logo y encabezado -->
     <div class="text-center mb-6">
       <img src="Resources/logo.png" alt="Logo" class="mx-auto w-20 mb-3" />
       <h1 class="text-2xl font-bold">Cambiar Contraseña</h1>
@@ -35,12 +33,17 @@
         Guardar nueva contraseña
       </button>
 
+      <!-- Mensaje dinámico -->
       <p id="reset-msg" class="text-center text-sm mt-2"></p>
     </form>
 
-    <!-- Botón volver al login -->
+    <!-- Opciones -->
     <div class="text-center mt-4">
-      <a href="index.html" class="text-blue-600 hover:underline">Volver al login</a>
+      <a href="index.html" class="text-blue-600 hover:underline block">Volver al login</a>
+      <a id="new-link-btn" href="index.html#forgot" 
+         class="hidden text-blue-600 hover:underline block mt-2">
+         Solicitar nuevo enlace
+      </a>
     </div>
   </div>
 
