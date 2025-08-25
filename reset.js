@@ -1,7 +1,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const supabaseUrl = "https://yoxwbxtntqrlioezfubv.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ usa siempre la anon key, nunca service_role
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ pon aquí tu anon key
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // ---- Cambiar contraseña ----
@@ -19,14 +19,14 @@ document.getElementById("reset-form").addEventListener("submit", async (e) => {
   }
 
   try {
-    // Supabase ya reconoce el access_token de la URL y permite cambiar password
+    // Supabase usa el access_token del link de recuperación automáticamente
     const { error } = await supabase.auth.updateUser({ password: pass1 });
     if (error) throw error;
 
     msg.textContent = "✅ Contraseña actualizada. Ahora puedes iniciar sesión.";
     msg.className = "text-green-600 text-center";
 
-    // Opcional: redirigir al login después de 2 segundos
+    // Redirigir al login después de 2s
     setTimeout(() => {
       window.location.href = "index.html";
     }, 2000);
