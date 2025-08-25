@@ -106,15 +106,15 @@ document.getElementById("forgot-password-form")?.addEventListener("submit", asyn
   if (!email) return showMsg(msg, "Ingresa tu correo", false);
 
   try {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + "/reset.html",
-    });
+    // 🔑 Sin redirectTo → Supabase manda su propio formulario de reset
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
     if (error) throw error;
     showMsg(msg, "✅ Te enviamos un correo con el link para cambiar contraseña.", true);
   } catch (err) {
     showMsg(msg, "❌ " + err.message, false);
   }
 });
+
 
 /* -------- PERFIL -------- */
 async function loadProfile() {
