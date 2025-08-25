@@ -1,9 +1,11 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
+// 🔑 Configura Supabase
 const supabaseUrl = "https://yoxwbxtntqrlioezfubv.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ pon tu anon key aquí
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ asegúrate que sea anon key
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// -------------------- UTILIDADES --------------------
 function showMsg(el, text, ok = false) {
   if (!el) return;
   el.textContent = text;
@@ -16,11 +18,12 @@ function showSuccessModal(title, message) {
   document.getElementById("modal-body").textContent = message;
   document.getElementById("message-modal").style.display = "block";
 }
+
 document.getElementById("close-message-modal")?.addEventListener("click", () => {
   document.getElementById("message-modal").style.display = "none";
 });
 
-/* -------- SIGNUP -------- */
+// -------------------- REGISTRO --------------------
 document.getElementById("signup-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = e.target.querySelector("button[type=submit]");
@@ -35,7 +38,7 @@ document.getElementById("signup-form")?.addEventListener("submit", async (e) => 
   showMsg(msg, "Creando cuenta...");
 
   try {
-    // Crear usuario en auth
+    // Crear usuario en Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -55,7 +58,7 @@ document.getElementById("signup-form")?.addEventListener("submit", async (e) => 
       actualizado_en: new Date().toISOString()
     });
 
-    // Enviar OTP si hay teléfono
+    // Si tiene teléfono, enviar OTP
     if (telefono) {
       await supabase.auth.signInWithOtp({ phone: telefono });
       showMsg(msg, "✅ Usuario creado, revisa el SMS con tu código", true);
@@ -71,10 +74,11 @@ document.getElementById("signup-form")?.addEventListener("submit", async (e) => 
     showMsg(msg, "❌ " + err.message, false);
     showSuccessModal("❌ Error al registrar", err.message);
   }
+
   btn.disabled = false; btn.textContent = "Crear cuenta";
 });
 
-/* -------- LOGIN -------- */
+// -------------------- LOGIN --------------------
 document.getElementById("login-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = e.target.querySelector("button[type=submit]");
@@ -95,10 +99,11 @@ document.getElementById("login-form")?.addEventListener("submit", async (e) => {
     showMsg(msg, "❌ " + err.message, false);
     showSuccessModal("❌ Error al iniciar sesión", err.message);
   }
+
   btn.disabled = false; btn.textContent = "Login";
 });
 
-/* -------- FORGOT PASSWORD -------- */
+// -------------------- RECUPERAR CONTRASEÑA --------------------
 document.getElementById("forgot-password-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = document.getElementById("forgot-email").value.trim();
@@ -106,8 +111,10 @@ document.getElementById("forgot-password-form")?.addEventListener("submit", asyn
   if (!email) return showMsg(msg, "Ingresa tu correo", false);
 
   try {
-    // 🔑 Supabase envía un email con link directo al formulario de cambio de contraseña
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    // Supabase envía un email con link al formulario oficial de cambio de contraseña
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "https://flyr-inspector.vercel.app/reset.html" // ⚠️ asegúrate de tener reset.html desplegado en Vercel
+    });
     if (error) throw error;
     showMsg(msg, "✅ Te enviamos un correo con el link para cambiar tu contraseña.", true);
   } catch (err) {
@@ -115,12 +122,11 @@ document.getElementById("forgot-password-form")?.addEventListener("submit", asyn
   }
 });
 
-
-
-/* -------- PERFIL -------- */
+// -------------------- PERFIL --------------------
 async function loadProfile() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
+
   document.getElementById("login-view").classList.add("hidden");
   document.getElementById("forgot-password-view").classList.add("hidden");
   document.getElementById("profile-view").classList.remove("hidden");
@@ -131,7 +137,7 @@ async function loadProfile() {
   document.getElementById("profile-phone").value = user.user_metadata?.telefono || "";
 }
 
-/* -------- LOGOUT -------- */
+// -------------------- LOGOUT --------------------
 document.getElementById("logout-button")?.addEventListener("click", async () => {
   await supabase.auth.signOut();
   showSuccessModal("👋 Hasta pronto", "Has cerrado sesión correctamente.");
@@ -139,14 +145,16 @@ document.getElementById("logout-button")?.addEventListener("click", async () => 
   document.getElementById("login-view").classList.remove("hidden");
 });
 
-/* -------- Navegación -------- */
+// -------------------- NAVEGACIÓN --------------------
 const signupModal = document.getElementById("signup-modal");
 document.getElementById("signup-link")?.addEventListener("click", (e) => {
-  e.preventDefault(); signupModal.style.display = "block";
+  e.preventDefault();
+  signupModal.style.display = "block";
 });
 document.getElementById("close-signup-modal")?.addEventListener("click", () => {
   signupModal.style.display = "none";
 });
+
 document.getElementById("forgot-password-link")?.addEventListener("click", (e) => {
   e.preventDefault();
   document.getElementById("login-view").classList.add("hidden");
@@ -158,7 +166,7 @@ document.getElementById("back-to-login-link")?.addEventListener("click", (e) => 
   document.getElementById("login-view").classList.remove("hidden");
 });
 
-/* -------- Estado inicial -------- */
+// -------------------- ESTADO DE SESIÓN --------------------
 window.addEventListener("DOMContentLoaded", async () => {
   const { data: { session } } = await supabase.auth.getSession();
   if (session?.user) await loadProfile();
