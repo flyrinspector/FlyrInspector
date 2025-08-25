@@ -1,59 +1,38 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const supabaseUrl = "https://yoxwbxtntqrlioezfubv.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ reemplaza con tu anon key
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ usa siempre la anon key, nunca service_role
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-let currentPhone = "";
-
-// ---- Enviar OTP ----
-document.getElementById("send-otp-form").addEventListener("submit", async (e) => {
+// ---- Cambiar contraseña ----
+document.getElementById("reset-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const phone = document.getElementById("phone").value.trim();
-  const msg = document.getElementById("send-otp-msg");
+
+  const pass1 = document.getElementById("new-password").value;
+  const pass2 = document.getElementById("confirm-password").value;
+  const msg = document.getElementById("reset-msg");
+
+  if (pass1 !== pass2) {
+    msg.textContent = "❌ Las contraseñas no coinciden.";
+    msg.className = "text-red-500 text-center";
+    return;
+  }
 
   try {
-    const { error } = await supabase.auth.signInWithOtp({ phone });
+    // Supabase ya reconoce el access_token de la URL y permite cambiar password
+    const { error } = await supabase.auth.updateUser({ password: pass1 });
     if (error) throw error;
 
-    msg.textContent = "✅ Código enviado al teléfono.";
-    msg.className = "text-green-600";
+    msg.textContent = "✅ Contraseña actualizada. Ahora puedes iniciar sesión.";
+    msg.className = "text-green-600 text-center";
 
-    currentPhone = phone;
-    document.getElementById("verify-otp-form").classList.remove("hidden");
+    // Opcional: redirigir al login después de 2 segundos
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 2000);
+
   } catch (err) {
     msg.textContent = "❌ " + err.message;
-    msg.className = "text-red-500";
+    msg.className = "text-red-500 text-center";
   }
-});
-
-// ---- Verificar OTP ----
-document.getElementById("verify-otp-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const token = document.getElementById("otp").value.trim();
-  const msg = document.getElementById("verify-otp-msg");
-
-  try {
-    const { data, error } = await supabase.auth.verifyOtp({
-      phone: currentPhone,
-      token,
-      type: "sms",
-    });
-    if (error) throw error;
-
-    msg.textContent = "✅ Verificación exitosa.";
-    msg.className = "text-green-600";
-
-    document.getElementById("profile-phone").textContent = "Teléfono: " + currentPhone;
-    document.getElementById("profile-view").classList.remove("hidden");
-  } catch (err) {
-    msg.textContent = "❌ " + err.message;
-    msg.className = "text-red-500";
-  }
-});
-
-// ---- Logout ----
-document.getElementById("logout-btn").addEventListener("click", async () => {
-  await supabase.auth.signOut();
-  location.reload();
 });
