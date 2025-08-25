@@ -16,9 +16,7 @@ body {
     margin: 0;
     font-family: "Inter", system-ui, sans-serif;
 
-    /* 🔹 Tu imagen de fondo */
-    background: url("08933f40-7d80-4234-a92a-9b7530967512.png") no-repeat center center fixed;
-    background-size: cover;
+
 
     display: flex;
     justify-content: center;
