@@ -46,7 +46,7 @@ document.getElementById("signup-form")?.addEventListener("submit", async (e) => 
   const nombre   = document.getElementById("signup-name").value.trim();
   const apellido = document.getElementById("signup-lastname").value.trim();
   const email    = document.getElementById("signup-email").value.trim();
-  const password = document.getElementById("signup-password").value;
+  const password = document.getElementById("signup-password").value;   
   const telefono = document.getElementById("signup-phone").value.trim();
 
   try {
