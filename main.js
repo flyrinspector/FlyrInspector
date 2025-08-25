@@ -2,7 +2,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 // 🔑 Configura Supabase
 const supabaseUrl = "https://yoxwbxtntqrlioezfubv.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ asegúrate que sea anon key
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ usa la anon key
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // -------------------- UTILIDADES --------------------
@@ -18,7 +18,6 @@ function showSuccessModal(title, message) {
   document.getElementById("modal-body").textContent = message;
   document.getElementById("message-modal").style.display = "block";
 }
-
 document.getElementById("close-message-modal")?.addEventListener("click", () => {
   document.getElementById("message-modal").style.display = "none";
 });
@@ -38,7 +37,6 @@ document.getElementById("signup-form")?.addEventListener("submit", async (e) => 
   showMsg(msg, "Creando cuenta...");
 
   try {
-    // Crear usuario en Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -47,7 +45,6 @@ document.getElementById("signup-form")?.addEventListener("submit", async (e) => 
     if (authError) throw authError;
     if (!authData?.user) throw new Error("No se pudo crear el usuario");
 
-    // Guardar en tabla usuarios
     await supabase.from("usuarios").upsert({
       id: authData.user.id,
       correo: email,
@@ -58,7 +55,6 @@ document.getElementById("signup-form")?.addEventListener("submit", async (e) => 
       actualizado_en: new Date().toISOString()
     });
 
-    // Si tiene teléfono, enviar OTP
     if (telefono) {
       await supabase.auth.signInWithOtp({ phone: telefono });
       showMsg(msg, "✅ Usuario creado, revisa el SMS con tu código", true);
@@ -111,9 +107,8 @@ document.getElementById("forgot-password-form")?.addEventListener("submit", asyn
   if (!email) return showMsg(msg, "Ingresa tu correo", false);
 
   try {
-    // Supabase envía un email con link al formulario oficial de cambio de contraseña
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "https://flyr-inspector.vercel.app/reset.html" // ⚠️ asegúrate de tener reset.html desplegado en Vercel
+      redirectTo: "https://flyr-inspector.vercel.app/reset.html"
     });
     if (error) throw error;
     showMsg(msg, "✅ Te enviamos un correo con el link para cambiar tu contraseña.", true);
@@ -136,6 +131,41 @@ async function loadProfile() {
   document.getElementById("profile-lastname").value = user.user_metadata?.apellido || "";
   document.getElementById("profile-phone").value = user.user_metadata?.telefono || "";
 }
+
+// Guardar cambios de perfil (incluye cambio de contraseña)
+document.getElementById("profile-form")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById("profile-message");
+  showMsg(msg, "Guardando cambios...");
+
+  const nombre   = document.getElementById("profile-name").value.trim();
+  const apellido = document.getElementById("profile-lastname").value.trim();
+  const telefono = document.getElementById("profile-phone").value.trim();
+  const nuevaPass = document.getElementById("profile-password").value;
+
+  try {
+    // 1️⃣ Actualizar metadata
+    const { error: metaError } = await supabase.auth.updateUser({
+      data: { nombre, apellido, telefono }
+    });
+    if (metaError) throw metaError;
+
+    // 2️⃣ Si hay contraseña nueva, actualizar
+    if (nuevaPass) {
+      const { error: passError } = await supabase.auth.updateUser({
+        password: nuevaPass
+      });
+      if (passError) throw passError;
+    }
+
+    showMsg(msg, "✅ Cambios guardados correctamente.", true);
+    showSuccessModal("✅ Perfil actualizado", "Tus cambios se han guardado con éxito.");
+    document.getElementById("profile-password").value = ""; // limpiar campo
+  } catch (err) {
+    showMsg(msg, "❌ " + err.message, false);
+    showSuccessModal("❌ Error al guardar", err.message);
+  }
+});
 
 // -------------------- LOGOUT --------------------
 document.getElementById("logout-button")?.addEventListener("click", async () => {
