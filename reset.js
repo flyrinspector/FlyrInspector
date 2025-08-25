@@ -1,7 +1,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const supabaseUrl = "https://yoxwbxtntqrlioezfubv.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ pon tu anon key de Supabase aquí
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlveHdieHRudHFybGlvZXpmdWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTcyMzIsImV4cCI6MjA3MTI5MzIzMn0.jKpB-kabRwKcJzMbjmrKoTrN9SrzYZwRHxtZcSWjpgo"; // ⚠️ pon tu anon key aquí
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const msg = document.getElementById("reset-msg");
@@ -10,7 +10,6 @@ const newLinkBtn = document.getElementById("new-link-btn");
 
 // ---------------- Procesar token de recuperación ----------------
 window.addEventListener("DOMContentLoaded", async () => {
-  // Si hay error en el hash (otp_expired, etc.)
   if (window.location.hash.includes("error=access_denied")) {
     msg.textContent = "❌ Este enlace ya no es válido o ha expirado. Solicita uno nuevo.";
     msg.className = "text-red-500 text-center";
@@ -19,7 +18,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Si viene un access_token válido en la URL, crear sesión
   try {
     const { data, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
     if (error) throw error;
@@ -53,11 +51,9 @@ form.addEventListener("submit", async (e) => {
     msg.textContent = "✅ Contraseña actualizada. Ahora puedes iniciar sesión.";
     msg.className = "text-green-600 text-center";
 
-    // Redirigir al login en 2 segundos
     setTimeout(() => {
       window.location.href = "index.html";
     }, 2000);
-
   } catch (err) {
     msg.textContent = "❌ " + err.message;
     msg.className = "text-red-500 text-center";

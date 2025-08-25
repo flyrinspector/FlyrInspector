@@ -4,54 +4,53 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cambiar Contraseña</title>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="./styles.css">
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gray-100">
+<body class="font-inter">
 
-  <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
-    <!-- Logo y encabezado -->
-    <div class="text-center mb-6">
-      <img src="Resources/logo.png" alt="Logo" class="mx-auto w-20 mb-3" />
-      <h1 class="text-2xl font-bold">Cambiar Contraseña</h1>
-      <p class="text-gray-500 text-sm mt-1">Ingresa tu nueva contraseña para continuar</p>
-    </div>
+  <main class="auth-page">
+    <section class="auth-card" role="form">
+      <!-- Logo y encabezado -->
+      <div class="brand">
+        <img src="Resources/logo.png" alt="Logo" class="brand-logo" />
+      </div>
+      <h1 class="title">Cambiar Contraseña</h1>
+      <p class="text-gray-500 text-sm text-center mb-4">Ingresa tu nueva contraseña para continuar</p>
 
-    <!-- Aviso sobre la duración -->
-    <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-2 rounded mb-4 text-sm">
-      ⚠️ El enlace enviado a tu correo es válido por <strong>1 hora</strong>.  
-      Si caducó, solicita un nuevo enlace.
-    </div>
+      <!-- Aviso -->
+      <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-2 rounded mb-4 text-sm">
+        ⚠️ El enlace enviado a tu correo es válido por <strong>1 hora</strong>.  
+        Si caducó, solicita un nuevo enlace.
+      </div>
 
-    <!-- Formulario de cambio de contraseña -->
-    <form id="reset-form" class="space-y-4">
-      <label for="new-password" class="block font-medium">Nueva contraseña</label>
-      <input type="password" id="new-password" required minlength="6"
-        placeholder="••••••••"
-        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-400" />
+      <!-- Formulario -->
+      <form id="reset-form" class="login-form">
+        <label for="new-password">Nueva contraseña</label>
+        <input type="password" id="new-password" required minlength="6" placeholder="••••••••" />
 
-      <label for="confirm-password" class="block font-medium">Confirmar contraseña</label>
-      <input type="password" id="confirm-password" required minlength="6"
-        placeholder="••••••••"
-        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-400" />
+        <label for="confirm-password">Confirmar contraseña</label>
+        <input type="password" id="confirm-password" required minlength="6" placeholder="••••••••" />
 
-      <button type="submit"
-        class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition">
-        Guardar nueva contraseña
-      </button>
+        <button type="submit" class="btn btn-primary btn-block">Guardar nueva contraseña</button>
+        <p id="reset-msg" class="text-center text-sm mt-2"></p>
+      </form>
 
-      <!-- Mensaje dinámico -->
-      <p id="reset-msg" class="text-center text-sm mt-2"></p>
-    </form>
-
-    <!-- Opciones -->
-    <div class="text-center mt-4">
-      <a href="index.html" class="text-blue-600 hover:underline block">Volver al login</a>
-      <a id="new-link-btn" href="index.html#forgot" 
-         class="hidden text-blue-600 hover:underline block mt-2">
-         Solicitar nuevo enlace
-      </a>
-    </div>
-  </div>
+      <div class="text-center mt-4">
+        <a href="index.html" class="link block">Volver al login</a>
+        <a id="new-link-btn" href="index.html#forgot" class="hidden link block mt-2">
+          Solicitar nuevo enlace
+        </a>
+      </div>
+    </section>
+  </main>
 
   <script type="module" src="./reset.js"></script>
 </body>
